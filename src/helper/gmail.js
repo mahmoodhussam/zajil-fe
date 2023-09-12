@@ -40,7 +40,7 @@ const getMessages = async (userId, token, setData) => {
 
   let summurizes = await body.map((item) => {
     let body = item;
-    return axios.post("/api/v1/tasks", body);
+    return axios.post(`${process.env.REACT_APP_BE}/api/v1/tasks`, body);
   });
   let result = await getAllSummurizes(summurizes);
   setData((prev) => {
