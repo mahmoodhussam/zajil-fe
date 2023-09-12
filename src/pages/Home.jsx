@@ -28,7 +28,6 @@ function Home() {
       const filterData = data.filter((item) =>
         JSON.stringify(item).includes(textInput)
       );
-      console.log("filterData", filterData);
       setFilterData(filterData);
     } else {
       setFilterData(data);

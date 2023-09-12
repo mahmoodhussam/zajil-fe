@@ -8,7 +8,6 @@ export const getUserID = async (token, setData, navigate) => {
     let res = await response.json();
     if (res?.error?.code === 401) navigate("/login");
     else getMessages(res.id, token, setData);
-    console.log("res", res);
   } catch (error) {
     console.log("error", error);
     navigate("/login");
@@ -32,13 +31,11 @@ const getMessages = async (userId, token, setData) => {
       }
     )
   );
-  console.log("ids", ids);
   const body = await getMessagesContent(ids);
   let withoutMessageBody = body.map((item) => ({
     from: item.from,
     subject: item.subject,
   }));
-  console.log("body", body);
   setData(withoutMessageBody);
 
   let summurizes = await body.map((item) => {
@@ -54,8 +51,6 @@ const getMessages = async (userId, token, setData) => {
       };
     });
   });
-  console.log("result", result);
-  console.log("summurize", summurizes);
 };
 
 const getAllSummurizes = async (summurizes) => {
@@ -78,14 +73,12 @@ const getAllSummurizes = async (summurizes) => {
 const getMessagesContent = async (ids) => {
   return await Promise.allSettled(ids)
     .then((data) => {
-      console.log("data", data);
       // filteration
       const filterData = data.filter((item) => {
         return item?.value?.data?.payload?.parts?.filter(
           (part) => part.mimeType === "text/plain"
         )?.length;
       });
-      console.log("filterData", filterData);
       let allMessages = filterData.map((item) => {
         let payload = item?.value?.data?.payload;
         let body = atob(
@@ -107,7 +100,6 @@ const getMessagesContent = async (ids) => {
           if (item?.value?.data?.payload.headers[i].name === "From") {
             from = item?.value?.data?.payload.headers[i].value;
             from = from.split(" ");
-            console.log("from", from);
             if (from.length === 1) from = from[0].split("@")[0];
             else from = from[0];
             break;
