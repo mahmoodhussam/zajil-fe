@@ -37,6 +37,8 @@ function Home() {
   useEffect(() => {
     if (localStorage.getItem("token")) {
       getUserID(localStorage.getItem("token"), setData, navigate);
+    } else {
+      navigate("/login");
     }
   }, [navigate]);
 
