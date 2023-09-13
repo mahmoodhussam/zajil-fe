@@ -86,17 +86,6 @@ function Home() {
           src={isPlayingAll ? Pause : Play}
           onClick={() => togglePlayPause()}
         />
-        {/* <audio
-          ref={audioRef}
-          style={{
-            display: "none",
-          }}
-          onPlaying={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
-          controls="controls"
-        >
-          Your browser does not support the audio tag.
-        </audio> */}
       </Flex>
     </Container>
   );
