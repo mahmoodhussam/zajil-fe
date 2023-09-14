@@ -79,23 +79,8 @@ const getMessagesContent = async (ids) => {
           (part) => part.mimeType === "text/plain"
         )?.length;
       });
-      let requestedDate = localStorage.getItem("DATE");
-      let dateFilteration = [];
       let todayData = new Date();
       todayData.setHours(0, 0, 0, 0);
-      if (requestedDate === "today") {
-        dateFilteration = filterData.map((item) => {
-          let payload = item?.value?.data?.payload;
-          for (let i = 0; i < item?.value?.data?.payload.headers.length; i++) {
-            if (item?.value?.data?.payload.headers[i].name === "Date") {
-              let date = new Date(item?.value?.data?.payload.headers[i].value);
-              date.setHours(0, 0, 0, 0);
-              if (date.toString() === todayData.toString()) break;
-            }
-          }
-          return {};
-        });
-      }
 
       let allMessages = [];
       for (let i = 0; i < filterData.length; i++) {
