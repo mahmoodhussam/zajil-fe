@@ -20,6 +20,12 @@ function Login() {
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", token);
+      if (!localStorage.getItem("MAX_NUMBER")) {
+        localStorage.setItem("MAX_NUMBER", 5);
+      }
+      if (!localStorage.getItem("DATE")) {
+        localStorage.setItem("DATE", "today");
+      }
       navigate("/");
     }
   }, [navigate, token]);

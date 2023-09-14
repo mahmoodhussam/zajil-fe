@@ -22,8 +22,8 @@ const getMessages = async (userId, token, setData) => {
     }
   );
   let res = await response.json();
-  let firstTenMessages = res?.messages.slice(0, 10);
-  let ids = firstTenMessages.map((item) =>
+  let messages = res?.messages;
+  let ids = messages.map((item) =>
     axios.get(
       `https://gmail.googleapis.com/gmail/v1/users/${userId}/messages/${item.id}`,
       {
@@ -79,39 +79,75 @@ const getMessagesContent = async (ids) => {
           (part) => part.mimeType === "text/plain"
         )?.length;
       });
-      let allMessages = filterData.map((item) => {
-        let payload = item?.value?.data?.payload;
-        let body = atob(
-          payload?.parts?.[0]?.body?.data
-            ?.replace(/-/g, "+")
-            ?.replace(/_/g, "/")
-        );
-        // subject
-        let subject = "";
-        for (let i = 0; i < item?.value?.data?.payload.headers.length; i++) {
-          if (item?.value?.data?.payload.headers[i].name === "Subject") {
-            subject = item?.value?.data?.payload.headers[i].value;
-            break;
+      console.log("filterData", filterData);
+      let requestedDate = localStorage.getItem("DATE");
+      let dateFilteration = [];
+      let todayData = new Date();
+      todayData.setHours(0, 0, 0, 0);
+      if (requestedDate === "today") {
+        dateFilteration = filterData.map((item) => {
+          let payload = item?.value?.data?.payload;
+          for (let i = 0; i < item?.value?.data?.payload.headers.length; i++) {
+            if (item?.value?.data?.payload.headers[i].name === "Date") {
+              let date = new Date(item?.value?.data?.payload.headers[i].value);
+              date.setHours(0, 0, 0, 0);
+              if (date.toString() === todayData.toString())
+                console.log("Todays");
+              console.log("date", date);
+              console.log("todayData", todayData);
+              break;
+            }
+          }
+          return {};
+        });
+      }
+
+      let allMessages = [];
+      for (let i = 0; i < filterData.length; i++) {
+        let payload = filterData[i]?.value?.data?.payload;
+        for (let i = 0; i < payload?.headers.length; i++) {
+          if (payload?.headers[i].name === "Date") {
+            let date = new Date(payload?.headers[i].value);
+            date.setHours(0, 0, 0, 0);
+            if (date.toString() === todayData.toString()) {
+              let body = atob(
+                payload?.parts?.[0]?.body?.data
+                  ?.replace(/-/g, "+")
+                  ?.replace(/_/g, "/")
+              );
+              // subject
+              let subject = "";
+              for (let i = 0; i < payload?.headers.length; i++) {
+                if (payload?.headers[i].name === "Subject") {
+                  subject = payload?.headers[i].value;
+                  break;
+                }
+              }
+              // sender
+              let from = "";
+              for (let i = 0; i < payload?.headers.length; i++) {
+                if (payload?.headers[i].name === "From") {
+                  from = payload?.headers[i].value;
+                  from = from.split(" ");
+                  if (from.length === 1) from = from[0].split("@")[0];
+                  else from = from[0];
+                  break;
+                }
+              }
+              allMessages.push({
+                body,
+                subject,
+                from,
+              });
+            } else {
+              break;
+            }
           }
         }
-        // sender
-        let from = "";
-        for (let i = 0; i < item?.value?.data?.payload.headers.length; i++) {
-          if (item?.value?.data?.payload.headers[i].name === "From") {
-            from = item?.value?.data?.payload.headers[i].value;
-            from = from.split(" ");
-            if (from.length === 1) from = from[0].split("@")[0];
-            else from = from[0];
-            break;
-          }
-        }
-        return {
-          from,
-          subject,
-          body,
-        };
-      });
-      return allMessages;
+      }
+      let numberOfFilteration = Number(localStorage.getItem("MAX_NUMBER"));
+      let filterNumberOfResult = allMessages.slice(0, numberOfFilteration);
+      return filterNumberOfResult;
     })
     .catch((err) => {
       console.log("err", err);
