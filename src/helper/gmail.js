@@ -79,7 +79,6 @@ const getMessagesContent = async (ids) => {
           (part) => part.mimeType === "text/plain"
         )?.length;
       });
-      console.log("filterData", filterData);
       let requestedDate = localStorage.getItem("DATE");
       let dateFilteration = [];
       let todayData = new Date();
@@ -91,11 +90,7 @@ const getMessagesContent = async (ids) => {
             if (item?.value?.data?.payload.headers[i].name === "Date") {
               let date = new Date(item?.value?.data?.payload.headers[i].value);
               date.setHours(0, 0, 0, 0);
-              if (date.toString() === todayData.toString())
-                console.log("Todays");
-              console.log("date", date);
-              console.log("todayData", todayData);
-              break;
+              if (date.toString() === todayData.toString()) break;
             }
           }
           return {};
