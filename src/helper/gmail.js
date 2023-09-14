@@ -80,7 +80,11 @@ const getMessagesContent = async (ids) => {
         )?.length;
       });
       let todayData = new Date();
+      let yesterdayDate = new Date(todayData.getTime());
+      yesterdayDate.setDate(todayData.getDate() - 1);
       todayData.setHours(0, 0, 0, 0);
+      yesterdayDate.setHours(0, 0, 0, 0);
+      let selectedDate = localStorage.getItem("DATE");
 
       let allMessages = [];
       for (let i = 0; i < filterData.length; i++) {
@@ -89,7 +93,12 @@ const getMessagesContent = async (ids) => {
           if (payload?.headers[i].name === "Date") {
             let date = new Date(payload?.headers[i].value);
             date.setHours(0, 0, 0, 0);
-            if (date.toString() === todayData.toString()) {
+            if (
+              (selectedDate === "today" &&
+                date.toString() === todayData.toString()) ||
+              (selectedDate === "yesterday" &&
+                date.toString() === yesterdayDate.toString())
+            ) {
               let body = atob(
                 payload?.parts?.[0]?.body?.data
                   ?.replace(/-/g, "+")
