@@ -66,7 +66,7 @@ function EmailCard({
         </Text>
       </Flex>
       {payload?.body?.length ? (
-        <Text>{payload.body}</Text>
+        <Text mt="30px">{payload.body}</Text>
       ) : (
         <Flex justifyContent="center" alignItems="center">
           <Spinner color="#000000" />
