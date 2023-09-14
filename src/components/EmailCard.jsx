@@ -82,8 +82,12 @@ function EmailCard({
           onPlaying={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
           onEnded={() => setCurrentAudio((prev) => prev + 1)}
-          // src={`data:audio/mp3;base64,${payload?.autio?.amazon?.audio}`}
-          src={sound}
+          src={
+            payload?.autio?.amazon?.audio
+              ? `data:audio/mp3;base64,${payload?.autio?.amazon?.audio}`
+              : sound
+          }
+          // src={sound}
           controls="controls"
         >
           Your browser does not support the audio tag.
